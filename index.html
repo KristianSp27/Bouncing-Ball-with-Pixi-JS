@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://pixijs.download/release/pixi.js"></script>
+    <title>Bouncing Balls</title>
+</head>
+<body>
+    <script>
+const app = new PIXI.Application({
+    width: 800,
+    height: 600,
+    backgroundColor: 0xffffff 
+});
+
+document.body.appendChild(app.view);
+
+const ball = new PIXI.Graphics();
+ball.beginFill(0xffffff);
+ball.lineStyle(2, 0x000000);
+ball.drawCircle(0, 0, 50);
+ball.endFill();
+ball.position.set(375, 275);
+ball.hitArea = new PIXI.Circle(0, 0, 50)
+
+app.stage.addChild(ball);
+
+let gravity = 0.3;
+let velocity = 0;
+let jumpStrength = 20;
+let jumpCount = 0;
+
+let hasCollided = false;
+
+const counterText = new PIXI.Text(`Jump count: ${jumpCount}`, { fill: 0x000000 });
+counterText.anchor.set(0.5)
+counterText.position.set(app.screen.width / 2, 30); 
+
+app.stage.addChild(counterText);
+app.stage.interactive = true;
+app.stage.on('click', () => {
+    velocity = -jumpStrength;
+    jumpCount++;
+    counterText.text = `Jump count: ${jumpCount}`;
+});
+
+const colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff, 0x00ffff];
+
+app.ticker.add((delta) => {
+    velocity += gravity;
+    ball.y += velocity;
+
+    if (ball.y + ball.height / 2 > app.screen.height) {
+        if (jumpCount >= 2) {
+            hasCollided = false;
+        } else if (!hasCollided) { 
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            app.renderer.backgroundColor = randomColor;
+            hasCollided = true; 
+        }
+        jumpCount = 0;
+        counterText.text = `Jump count: ${jumpCount}`;
+        ball.y = app.screen.height - ball.height / 2;
+        velocity = -velocity / 2;
+        if (velocity >= 5) { 
+            velocity = -velocity / 4; 
+        } else {
+            velocity = 0; 
+        }
+    } else {
+        hasCollided = false; 
+    }
+});
+
+      </script>   
+</body>
+</html>
