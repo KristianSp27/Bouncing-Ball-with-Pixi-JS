@@ -40,7 +40,7 @@ counterText.position.set(app.screen.width / 2, 30);
 
 app.stage.addChild(counterText);
 app.stage.interactive = true;
-app.stage.on('click', () => {
+app.stage.on('touchpress', () => {
     velocity = -jumpStrength;
     jumpCount++;
     counterText.text = `Jump count: ${jumpCount}`;
